@@ -1,6 +1,6 @@
 'use strict'
 const messageBox = document.querySelector('.message')
-let secretNumber = Math.floor(Math.random() * 20)
+let secretNumber = generate()
 const checkForm = document.querySelector('.left')
 const again = document.querySelector('.again')
 
@@ -16,11 +16,11 @@ checkForm.addEventListener('submit', e => {
 
     // *When there is no guess
     if (!guess) {
-        messageBox.textContent = '⛔ No Number!!'
+        setMessage('⛔ No Number!!')
     }
     //* When guess is correct
     else if (guess === secretNumber) {
-        messageBox.textContent = '🎉 Correct Number!'
+        setMessage('🎉 Correct Number!')
 
         //? Change css Style of body
         document.querySelector('body').style.backgroundColor = '#60b347'
@@ -32,34 +32,17 @@ checkForm.addEventListener('submit', e => {
             document.querySelector('.highscore').textContent = highScore
         }
     }
-
-    //* when guess is above the secret number
-    else if (guess > secretNumber) {
+    //* when guess is wrong
+    else if (guess !== secretNumber) {
         if (score > 1) {
-            messageBox.textContent = '📈 Too High!!!'
+            setMessage(guess > secretNumber ? '📈 Too High!!!' : '📉 Too Low!!!')
             checkForm.guess.value = ''
             checkForm.guess.focus()
             score--
             document.querySelector('.score').textContent = score
         }
         else {
-            messageBox.textContent = '💥💣 You Lost the game loser!!'
-            document.querySelector('.score').textContent = 0
-            document.querySelector('body').style.backgroundColor = 'crimson'
-        }
-    }
-
-    //* when guess is below the secret number
-    else if (guess < secretNumber) {
-        if (score > 1) {
-            messageBox.textContent = '📉 Too Low!!!'
-            checkForm.guess.value = ''
-            checkForm.guess.focus()
-            score--
-            document.querySelector('.score').textContent = score
-        }
-        else {
-            messageBox.textContent = '💥💣 You Lost the game loser!!'
+            setMessage('💥💣 You Lost the game loser!!')
             document.querySelector('.score').textContent = 0
             document.querySelector('body').style.backgroundColor = 'crimson'
         }
@@ -68,11 +51,21 @@ checkForm.addEventListener('submit', e => {
 
 again.addEventListener('click', () => {
     score = 20
-    secretNumber = Math.floor(Math.random() * 20)
-    messageBox.textContent = 'Start guessing...'
+    secretNumber = generate()
+    setMessage('Start guessing...')
     document.querySelector('.score').textContent = score
     document.querySelector('.number').textContent = '?'
     document.querySelector('.guess').value = ''
     document.querySelector('body').style.backgroundColor = '#222'
     document.querySelector('.number').style.width = '15rem'
 })
+
+// displays message to the dom
+function setMessage(message) {
+    messageBox.textContent = message
+}
+
+// generate a random number
+function generate() {
+    return Math.floor(Math.random() * 20)
+}
